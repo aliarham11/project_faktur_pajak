@@ -16,5 +16,33 @@ namespace FakturPajakApp
         {
             InitializeComponent();
         }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fdlg = new OpenFileDialog();
+            fdlg.Title = "Browse Faktur Pajak";
+            fdlg.InitialDirectory = @"c:\";
+            fdlg.Filter = "MS excel files (*.xls)|*.xls|MS excel 2010++ files (*.xlsx)|*.xlsx";
+            fdlg.FilterIndex = 2;
+            fdlg.RestoreDirectory = true;
+            if (fdlg.ShowDialog() == DialogResult.OK)
+            {
+                tbxPathReport.Text = fdlg.FileName;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog fdlg = new OpenFileDialog();
+            fdlg.Title = "Browse Faktur Pajak";
+            fdlg.InitialDirectory = @"c:\";
+            fdlg.Filter = "MS excel files (*.xls)|*.xls|MS excel 2010++ files (*.xlsx)|*.xlsx";
+            fdlg.FilterIndex = 2;
+            fdlg.RestoreDirectory = true;
+            if (fdlg.ShowDialog() == DialogResult.OK)
+            {
+                tbxPathTemplate.Text = fdlg.FileName;
+            }
+        }
     }
 }
