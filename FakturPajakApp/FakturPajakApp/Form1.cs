@@ -112,7 +112,209 @@ namespace FakturPajakApp
 
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            newFakturPajak();
+            //newFakturPajak();
+            writeReport();
+        }
+
+        public string convertMonth(int num)
+        {
+            if (num == 1)
+            {
+                return "Januari";
+            }
+
+            if (num == 2)
+            {
+                return "Februari";
+            }
+
+            if (num == 3)
+            {
+                return "Maret";
+            }
+
+            if (num == 4)
+            {
+                return "April";
+            }
+
+            if (num == 5)
+            {
+                return "Mei";
+            }
+
+            if (num == 6)
+            {
+                return "Juni";
+            }
+
+            if (num == 7)
+            {
+                return "Juli";
+            }
+
+            if (num == 8)
+            {
+                return "Agustus";
+            }
+
+            if (num == 9)
+            {
+                return "September";
+            }
+
+            if (num == 10)
+            {
+                return "Oktober";
+            }
+
+            if (num == 11)
+            {
+                return "November";
+            }
+
+            if (num == 12)
+            {
+                return "Desember";
+            }
+
+            return "Unknown";
+        }
+
+        public void createSheet(string name, Excel.Workbook myWorkbook)
+        {
+            var xlSheets = myWorkbook.Sheets as Excel.Sheets;
+            var newSheet = (Excel.Worksheet)xlSheets.Add(xlSheets[1], Type.Missing, Type.Missing, Type.Missing);
+            newSheet.Name = name;
+            //Creating Header
+            newSheet.Cells[1, 1] = "Rekap Faktur Pajak Dan Nota Retur";
+            newSheet.Cells[2, 1] = "Masa Pajak: "+ name +" 2014";
+            newSheet.Cells[3, 1] = "No.";
+            newSheet.Cells[4, 1] = "Urut";
+            
+            newSheet.Cells[3, 2] = "Faktur";
+            newSheet.Cells[4, 2] = "Pajak";
+
+            newSheet.Cells[3, 4] = "Tanggal";
+            newSheet.Cells[4, 4] = "Faktur Pajak";
+
+            newSheet.Cells[3, 5] = "NPWP";
+
+            newSheet.Cells[3, 6] = "Nama";
+            newSheet.Cells[4, 6] = "Pembeli";
+
+            newSheet.Cells[3, 7] = "Nomor";
+            newSheet.Cells[4, 7] = "DO/DN";
+
+            newSheet.Cells[3, 8] = "Nama";
+            newSheet.Cells[4, 8] = "Jenis/ No Invoice";
+
+            newSheet.Cells[4, 9] = "Unit";
+
+            newSheet.Cells[3, 10] = "DPP";
+            newSheet.Cells[4, 10] = "Unit";
+
+            newSheet.Cells[3, 11] = "DPP";
+            newSheet.Cells[4, 11] = "Parts";
+
+            newSheet.Cells[3, 12] = "DPP";
+            newSheet.Cells[4, 12] = "Other";
+
+            newSheet.Cells[3, 13] = "PPN";
+            newSheet.Cells[4, 13] = "Unit";
+
+            newSheet.Cells[3, 14] = "PPN";
+            newSheet.Cells[4, 14] = "Parts";
+
+            newSheet.Cells[3, 15] = "PPN";
+            newSheet.Cells[4, 15] = "Other";
+
+            newSheet.Cells[3, 16] = "PPNBM";
+
+            newSheet.Cells[3, 17] = "Total";
+
+            newSheet.Cells[3, 18] = "DPP";
+
+            newSheet.Cells[3, 19] = "PPN";
+            
+        }
+
+        public void writeReport()
+        {
+
+            Excel.Workbook myBook = null;
+            Excel.Application myApp = null;
+            Excel.Worksheet mySheet = null;
+            try
+            {
+                bool isEmpty = false;
+                bool found = false;
+                string month;
+                string pathReport;
+                int lastRow;
+                lastRow = 1;
+
+                pathReport = tbxPathReport.Text.ToString();
+                myApp = new Excel.Application();
+                myApp.Visible = false;
+                myBook = myApp.Workbooks.Open(pathReport);
+                month = convertMonth((int)dateTimePicker1.Value.Month);
+                Console.WriteLine(month);
+                foreach (Excel.Worksheet sheet in myBook.Sheets)
+                {
+                    if (sheet.Name.Equals(month))
+                    {
+                        mySheet = (Excel.Worksheet)myBook.Sheets[month];
+                        found = true;
+                        break;
+                    }
+
+                }
+
+                if (found == false)
+                {
+                    createSheet(month, myBook);
+                    mySheet = (Excel.Worksheet)myBook.Sheets[month];
+                    //create sheet
+                }
+
+                System.Array MyValues = (System.Array)mySheet.get_Range("A1", "A1000").Cells.Value;
+                while (!isEmpty)
+                {
+                    if (MyValues.GetValue(lastRow, 1) == null)
+                    {
+                        //
+                        isEmpty = true;
+                    }
+                    else lastRow++;
+
+                }
+                //lastRow = (int)mySheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row;
+
+                //lastRow += 1;
+                //MessageBox.Show(lastRow.ToString());
+
+                dateTimePicker1.Format = DateTimePickerFormat.Custom;
+                dateTimePicker1.CustomFormat = "MM/dd/yyyy";
+                mySheet.Cells[lastRow, 1] = lastRow - 4;
+                mySheet.Cells[lastRow, 2] = tbxNoFP1.Text;
+                mySheet.Cells[lastRow, 3] = tbxNoFP2.Text;
+                mySheet.Cells[lastRow, 4] = dateTimePicker1.Text;
+                mySheet.Cells[lastRow, 6] = tbxNamaPerusahaan.Text;
+                mySheet.Cells[lastRow, 18] = tbxDPP.Text;
+                mySheet.Cells[lastRow, 19] = tbxPPN.Text;
+                myBook.Save();
+             //   myBook.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                myBook.Close();
+            }
+
         }
     }
 }
